@@ -1,6 +1,10 @@
 package pedido;
 
+import ingredientes.Adicional;
+import ingredientes.Base;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class Pedido{
 
@@ -27,19 +31,53 @@ public class Pedido{
     }
 
     public double calcularTotal(Cardapio cardapio){
-        double total= 0;
-        //TODO
-        return total;
+        double precoTotal = 0;
+        for (ItemPedido itemPedido : this.itens){
+            Base basePedido = itemPedido.getShake().getBase();
+            Double precoBase = cardapio.buscarPreco(basePedido);
+
+            switch (itemPedido.getShake().getTipoTamanho()) {
+                case P:
+                    precoTotal += precoBase * itemPedido.getQuantidade();
+                    break;
+                case M:
+                    precoTotal += precoBase * 1.3 * itemPedido.getQuantidade();
+                    break;
+                case G:
+                    precoTotal += precoBase * 1.5 * itemPedido.getQuantidade();
+                    break;
+            }
+        };
+
+        precoTotal += this.calcularAdicionais(cardapio);
+
+        return precoTotal;
+    }
+
+    private double calcularAdicionais(Cardapio cardapio) {
+        double precoTotalAdicionais = 0;
+        for(ItemPedido itemPedido : this.itens ) {
+            double precoAdicionais = 0;
+            List<Adicional> adicionais = itemPedido.getShake().getAdicionais();
+
+            for(Adicional adicional : adicionais) {
+                precoAdicionais += cardapio.buscarPreco(adicional);
+            }
+
+            precoTotalAdicionais += precoAdicionais * itemPedido.getQuantidade();
+        }
+
+        return precoTotalAdicionais;
     }
 
     public void adicionarItemPedido(ItemPedido itemPedidoAdicionado){
-        //TODO
+        this.itens.add(itemPedidoAdicionado);
     }
 
     public boolean removeItemPedido(ItemPedido itemPedidoRemovido) {
         //substitua o true por uma condição
-        if (true) {
-            //TODO
+        if (this.itens.contains(itemPedidoRemovido)) {
+            this.itens.remove(itemPedidoRemovido);
         } else {
             throw new IllegalArgumentException("Item nao existe no pedido.");
         }
