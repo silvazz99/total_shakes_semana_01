@@ -1,7 +1,6 @@
 package ingredientes;
 
-import pedido.Cardapio;
 
-public interface Adicional extends Ingrediente {
+public interface Adicional extends Ingrediente{
 
 }

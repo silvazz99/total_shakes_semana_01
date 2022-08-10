@@ -71,16 +71,44 @@ public class Pedido{
     }
 
     public void adicionarItemPedido(ItemPedido itemPedidoAdicionado){
-        this.itens.add(itemPedidoAdicionado);
+        boolean adicionado = false;
+        for (ItemPedido item : itens) {
+            if(item.getShake().toString().equals(itemPedidoAdicionado.getShake().toString())) {
+                item.setQuantidade(item.getQuantidade() + itemPedidoAdicionado.getQuantidade());
+                adicionado = true;
+                break;
+            }
+        }
+        if(!adicionado){
+            this.itens.add(itemPedidoAdicionado);
+        }
+
     }
 
     public boolean removeItemPedido(ItemPedido itemPedidoRemovido) {
         //substitua o true por uma condição
-        if (this.itens.contains(itemPedidoRemovido)) {
-            this.itens.remove(itemPedidoRemovido);
+        boolean removido = false;
+        int index = 0, qtd = 0;
+        for (ItemPedido item : itens) {
+            if(item.getShake().toString().equals(itemPedidoRemovido.getShake().toString())) {
+                index = itens.indexOf(item);
+                qtd = item.getQuantidade();
+                removido = true;
+                break;
+            }
+        }
+
+        if(removido){
+            itemPedidoRemovido.setQuantidade(qtd - 1);
+            itens.set(index, itemPedidoRemovido);
+            if(qtd - 1 <= 0) {
+                itens.remove(itemPedidoRemovido);
+            }
         } else {
             throw new IllegalArgumentException("Item nao existe no pedido.");
         }
+
+
         return false;
     }
 

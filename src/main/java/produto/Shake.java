@@ -3,6 +3,7 @@ package produto;
 import ingredientes.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Shake {
     private Base base;
@@ -11,7 +12,7 @@ public class Shake {
     private List<Adicional> adicionais;
     private TipoTamanho  tipoTamanho;
 
-    public Shake(Base base, Fruta fruta, Topping topping, TipoTamanho tipoTam) {
+    public <T> Shake(Base base, Fruta fruta, Topping topping, TipoTamanho tipoTam) {
         this.base = base;
         this.fruta = fruta;
         this.topping = topping;
@@ -24,6 +25,8 @@ public class Shake {
         this.fruta = fruta;
         this.topping = topping;
         this.adicionais = adicionais;
+        Collections.sort(this.adicionais, Comparator.comparing(a -> a.obterTipo().toString()));
+
         this.tipoTamanho = tipoTam;
     }
 

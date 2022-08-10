@@ -81,7 +81,7 @@ public class PedidoTest{
         pedido.adicionarItemPedido(itemPedido);
         pedido.adicionarItemPedido(itemPedido2);
 
-        assertEquals(2, pedido.getItens().size());
+        assertEquals(1, pedido.getItens().size());
         pedido.getItens().forEach(item -> {
             assertEquals(new Base(TipoBase.Sorvete), item.getShake().getBase());
             assertEquals(new Fruta(TipoFruta.Morango), item.getShake().getFruta());
@@ -156,11 +156,10 @@ public class PedidoTest{
         ItemPedido itemPedidoRemovido = new ItemPedido(shakeRemovido, 10);
 
         pedido.adicionarItemPedido(itemPedido);
-        pedido.adicionarItemPedido(itemPedidoRemovido);
         pedido.removeItemPedido(itemPedidoRemovido);
 
         assertEquals(1, pedido.getItens().size());
-        assertEquals(3, pedido.getItens().get(0).getQuantidade());
+        assertEquals(2, pedido.getItens().get(0).getQuantidade());
     }
 
     @Test
@@ -183,10 +182,9 @@ public class PedidoTest{
         ItemPedido itemPedidoRemovido = new ItemPedido(shakeRemovido, 10);
 
         pedido.adicionarItemPedido(itemPedido);
-        pedido.adicionarItemPedido(itemPedidoRemovido);
         pedido.removeItemPedido(itemPedidoRemovido);
 
-        assertEquals(1, pedido.getItens().size());
+        assertEquals(0, pedido.getItens().size());
     }
 
     @Test
