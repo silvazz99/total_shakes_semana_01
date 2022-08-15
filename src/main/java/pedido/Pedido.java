@@ -1,5 +1,6 @@
 package pedido;
 
+import exceptions.ItemNotFound;
 import ingredientes.Adicional;
 import ingredientes.Base;
 
@@ -86,7 +87,7 @@ public class Pedido{
                 result.get().setQuantidade(qtdShake - 1);
             }
         } else {
-            throw new IllegalArgumentException("Item nao existe no pedido.");
+            throw new ItemNotFound();
         }
 
         return false;
