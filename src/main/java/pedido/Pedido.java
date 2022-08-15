@@ -5,6 +5,7 @@ import ingredientes.Base;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Pedido{
 
@@ -35,18 +36,7 @@ public class Pedido{
         for (ItemPedido itemPedido : this.itens){
             Base basePedido = itemPedido.getShake().getBase();
             Double precoBase = cardapio.buscarPreco(basePedido);
-
-            switch (itemPedido.getShake().getTipoTamanho()) {
-                case P:
-                    precoTotal += precoBase * itemPedido.getQuantidade();
-                    break;
-                case M:
-                    precoTotal += precoBase * 1.3 * itemPedido.getQuantidade();
-                    break;
-                case G:
-                    precoTotal += precoBase * 1.5 * itemPedido.getQuantidade();
-                    break;
-            }
+            precoTotal += precoBase * itemPedido.getShake().getTipoTamanho().getMultiplicador() * itemPedido.getQuantidade();
         };
 
         precoTotal += this.calcularAdicionais(cardapio);
@@ -86,28 +76,18 @@ public class Pedido{
     }
 
     public boolean removeItemPedido(ItemPedido itemPedidoRemovido) {
-        //substitua o true por uma condição
-        boolean removido = false;
-        int index = 0, qtd = 0;
-        for (ItemPedido item : itens) {
-            if(item.getShake().toString().equals(itemPedidoRemovido.getShake().toString())) {
-                index = itens.indexOf(item);
-                qtd = item.getQuantidade();
-                removido = true;
-                break;
-            }
-        }
+        Optional<ItemPedido> result = itens.stream().filter(item -> item.getShake().toString().equals(itemPedidoRemovido.getShake().toString())).findFirst();
 
-        if(removido){
-            itemPedidoRemovido.setQuantidade(qtd - 1);
-            itens.set(index, itemPedidoRemovido);
-            if(qtd - 1 <= 0) {
-                itens.remove(itemPedidoRemovido);
+        if(!result.isEmpty()){
+            int qtdShake = result.get().getQuantidade();
+            if(qtdShake == 1) {
+                itens.remove(result.get());
+            } else {
+                result.get().setQuantidade(qtdShake - 1);
             }
         } else {
             throw new IllegalArgumentException("Item nao existe no pedido.");
         }
-
 
         return false;
     }

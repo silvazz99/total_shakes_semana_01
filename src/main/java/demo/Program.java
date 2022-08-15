@@ -16,12 +16,12 @@ public class Program {
         Cliente cliente = new Cliente(1,"Pedro","pedro@email.com");
         Cardapio cardapio = new Cardapio();
 
-        Base sorvete = new Base(TipoBase.Sorvete);
-        Base iogurte = new Base(TipoBase.Iorgute);
-        Fruta banana = new Fruta(TipoFruta.Banana);
-        Fruta morango = new Fruta(TipoFruta.Morango);
-        Topping mel = new Topping(TipoTopping.Mel);
-        Topping aveia = new Topping(TipoTopping.Aveia);
+        Base sorvete = new Base(TipoBase.SORVETE);
+        Base iogurte = new Base(TipoBase.IORGUTE);
+        Fruta banana = new Fruta(TipoFruta.BANANA);
+        Fruta morango = new Fruta(TipoFruta.MORANGO);
+        Topping mel = new Topping(TipoTopping.MEL);
+        Topping aveia = new Topping(TipoTopping.AVEIA);
 
         cardapio.adicionarIngrediente(sorvete,10.0);
         cardapio.adicionarIngrediente(iogurte,8.0);
@@ -77,10 +77,10 @@ public class Program {
         System.out.println(pedido3.calcularTotal(cardapio));
 
         Shake shake4 = new Shake(iogurte, morango, mel, new ArrayList<>(List.of(banana, morango)), TipoTamanho.P);
-        ItemPedido itemPedido4 = new ItemPedido(shake4, 3);
-        Pedido pedido4 = new Pedido(4, new ArrayList<>(List.of(itemPedido4)), cliente);
-        System.out.println(pedido4);
-        System.out.println(pedido4.calcularTotal(cardapio));
+        ItemPedido itemPedido4 = new ItemPedido(shake4, 2);
+        pedido3.adicionarItemPedido(itemPedido4);
+        System.out.println(pedido3);
+        System.out.println(pedido3.calcularTotal(cardapio));
 
         System.out.println("::::: Serializando Cliente 1 e Desserializando Cliente 1");
         cliente.serializarCliente();
