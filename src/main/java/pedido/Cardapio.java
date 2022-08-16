@@ -1,8 +1,11 @@
 package pedido;
 
+import exceptions.ExcecaoIngrediente;
+import exceptions.ExcecaoPreco;
+import exceptions.ItemNotFound;
 import ingredientes.Ingrediente;
 
-import java.util.TreeMap;
+import java.util.*;
 
 public class Cardapio {
     private TreeMap<Ingrediente,Double> precos;
@@ -16,24 +19,39 @@ public class Cardapio {
     }
 
     public void adicionarIngrediente(Ingrediente ingrediente,Double preco){
-        //TODO
+        validarPreco(preco);
+        this.precos.put(ingrediente, preco);
     }
 
     public boolean atualizarIngrediente(Ingrediente ingrediente,Double preco){
-       //TODO
+        validarPreco(preco);
+        if(precos.containsKey(ingrediente)) {
+            this.precos.put(ingrediente, preco);
+        } else {
+            throw new ExcecaoIngrediente();
+        }
         return true;
     }
 
     public boolean removerIngrediente(Ingrediente ingrediente){
-       //TODO
-        return true;
+       if(precos.containsKey(ingrediente)) {
+           precos.remove(ingrediente);
+       } else {
+           throw new ExcecaoIngrediente();
+       }
+
+       return true;
     }
 
     public Double buscarPreco(Ingrediente ingrediente){
-        //TODO
-        return 0.0;
+        if(precos.containsKey(ingrediente)) {
+            return this.precos.get(ingrediente);
+        } else throw new ExcecaoIngrediente();
     }
 
+    private void validarPreco(Double preco) throws ExcecaoPreco {
+        if(preco.doubleValue() <= 0) throw new ExcecaoPreco();
+    }
     @Override
     public String toString() {
         return this.precos.toString();

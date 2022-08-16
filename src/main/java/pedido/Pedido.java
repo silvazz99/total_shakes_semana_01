@@ -1,6 +1,12 @@
 package pedido;
 
+import exceptions.ItemNotFound;
+import ingredientes.Adicional;
+import ingredientes.Base;
+
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class Pedido{
 
@@ -27,22 +33,63 @@ public class Pedido{
     }
 
     public double calcularTotal(Cardapio cardapio){
-        double total= 0;
-        //TODO
-        return total;
+        double precoTotal = 0;
+        for (ItemPedido itemPedido : this.itens){
+            Base basePedido = itemPedido.getShake().getBase();
+            Double precoBase = cardapio.buscarPreco(basePedido);
+            precoTotal += precoBase * itemPedido.getShake().getTipoTamanho().getMultiplicador() * itemPedido.getQuantidade();
+        };
+
+        precoTotal += this.calcularAdicionais(cardapio);
+
+        return precoTotal;
+    }
+
+    private double calcularAdicionais(Cardapio cardapio) {
+        double precoTotalAdicionais = 0;
+        for(ItemPedido itemPedido : this.itens ) {
+            double precoAdicionais = 0;
+            List<Adicional> adicionais = itemPedido.getShake().getAdicionais();
+
+            for(Adicional adicional : adicionais) {
+                precoAdicionais += cardapio.buscarPreco(adicional);
+            }
+
+            precoTotalAdicionais += precoAdicionais * itemPedido.getQuantidade();
+        }
+
+        return precoTotalAdicionais;
     }
 
     public void adicionarItemPedido(ItemPedido itemPedidoAdicionado){
-        //TODO
+        boolean adicionado = false;
+        for (ItemPedido item : itens) {
+            if(item.getShake().toString().equals(itemPedidoAdicionado.getShake().toString())) {
+                item.setQuantidade(item.getQuantidade() + itemPedidoAdicionado.getQuantidade());
+                adicionado = true;
+                break;
+            }
+        }
+        if(!adicionado){
+            this.itens.add(itemPedidoAdicionado);
+        }
+
     }
 
     public boolean removeItemPedido(ItemPedido itemPedidoRemovido) {
-        //substitua o true por uma condição
-        if (true) {
-            //TODO
+        Optional<ItemPedido> result = itens.stream().filter(item -> item.getShake().toString().equals(itemPedidoRemovido.getShake().toString())).findFirst();
+
+        if(!result.isEmpty()){
+            int qtdShake = result.get().getQuantidade();
+            if(qtdShake == 1) {
+                itens.remove(result.get());
+            } else {
+                result.get().setQuantidade(qtdShake - 1);
+            }
         } else {
-            throw new IllegalArgumentException("Item nao existe no pedido.");
+            throw new ItemNotFound();
         }
+
         return false;
     }
 
