@@ -8,8 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ArmazemTest {
@@ -18,6 +17,9 @@ public class ArmazemTest {
     Fruta morango;
     Fruta abacate;
     Fruta banana;
+    private final String INGREDIENTE_NAO_ENCONTRADO = "Ingrediente não encontrado";
+    private final String INGREDIENTE_JA_CADASTRADO = "Ingrediente já cadastrado.";
+    private final String QUANTIDADE_INVALIDA = "Quantidade Inválida";
 
     @BeforeAll
     void setup() {
@@ -38,9 +40,12 @@ public class ArmazemTest {
         armazem.cadastrarIngredienteEmEstoque(abacate);
         armazem.cadastrarIngredienteEmEstoque(banana);
 
-        assertEquals(0, armazem.consultarQuantidadeDoIngredienteEmEstoque(morango));
-        assertEquals(0, armazem.consultarQuantidadeDoIngredienteEmEstoque(banana));
-        assertEquals(0, armazem.consultarQuantidadeDoIngredienteEmEstoque(abacate));
+        assertAll(
+                () -> assertEquals(0, armazem.consultarQuantidadeDoIngredienteEmEstoque(morango)),
+                () -> assertEquals(0, armazem.consultarQuantidadeDoIngredienteEmEstoque(banana)),
+                () -> assertEquals(0, armazem.consultarQuantidadeDoIngredienteEmEstoque(abacate))
+        );
+
     }
 
     @Test
@@ -50,7 +55,7 @@ public class ArmazemTest {
             armazem.cadastrarIngredienteEmEstoque(morango);
         });
 
-        assertEquals("Ingrediente já cadastrado.", exception.getMessage());
+        assertEquals(INGREDIENTE_JA_CADASTRADO, exception.getMessage());
     }
 
     @Test
@@ -62,7 +67,7 @@ public class ArmazemTest {
             armazem.consultarQuantidadeDoIngredienteEmEstoque(morango);
         });
 
-        assertEquals("Ingrediente não encontrado", exception.getMessage());
+        assertEquals(INGREDIENTE_NAO_ENCONTRADO, exception.getMessage());
     }
 
     @Test
@@ -74,12 +79,12 @@ public class ArmazemTest {
     }
 
     @Test
-    void ShouldNotAdd_WhenIngredientIsNotRegistered(){
+    void ShouldNotAdd_WhenIngredientIsNotRegistered() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             armazem.adicionarQuantidadeDoIngredienteEmEstoque(morango, 10);
         });
 
-        assertEquals("Ingrediente não encontrado", exception.getMessage());
+        assertEquals(INGREDIENTE_NAO_ENCONTRADO, exception.getMessage());
     }
 
     @Test
@@ -89,6 +94,36 @@ public class ArmazemTest {
         armazem.reduzirQuantidadeDoIngredienteEmEstoque(morango, 5);
 
         assertEquals(5, armazem.consultarQuantidadeDoIngredienteEmEstoque(morango));
+    }
+
+    @Test
+    void ShouldThrowException_WhenUnregisterIngredientNotFound() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> armazem.descadastrarIngredienteEmEstoque(morango));
+
+        assertEquals(INGREDIENTE_NAO_ENCONTRADO, exception.getMessage());
+    }
+
+    @Test
+    void ShouldNotReduce_WhenQuantityBelowZero() {
+        armazem.cadastrarIngredienteEmEstoque(morango);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            armazem.reduzirQuantidadeDoIngredienteEmEstoque(morango, 10);
+        });
+
+        assertEquals(QUANTIDADE_INVALIDA, exception.getMessage());
+    }
+
+    @Test
+    void ShouldNotReduce_WhenIngredientQuantityBelowReduceQuantity() {
+        armazem.cadastrarIngredienteEmEstoque(morango);
+        armazem.adicionarQuantidadeDoIngredienteEmEstoque(morango, 5);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            armazem.reduzirQuantidadeDoIngredienteEmEstoque(morango, 10);
+        });
+
+        assertEquals(QUANTIDADE_INVALIDA, exception.getMessage());
     }
 
 }

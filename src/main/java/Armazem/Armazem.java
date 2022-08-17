@@ -11,35 +11,42 @@ public class Armazem {
     TreeMap<Ingrediente, Integer> estoque = new TreeMap<>();
 
     public void cadastrarIngredienteEmEstoque(Ingrediente ingrediente) {
-        if(estoque.get(ingrediente) == null){
-            estoque.put(ingrediente, 0);
-        } else {
-            throw new IllegalArgumentException("Ingrediente já cadastrado.");
-        }
-
+        verificaSeIngredienteJaExiste(ingrediente);
+        estoque.put(ingrediente, 0);
     }
 
     public void descadastrarIngredienteEmEstoque(Ingrediente ingrediente) {
+        verificaSeIngredienteNaoExiste(ingrediente);
         estoque.remove(ingrediente);
     }
 
     public void adicionarQuantidadeDoIngredienteEmEstoque(Ingrediente ingrediente, Integer quantidade) {
-        Integer qtdIngrediente = estoque.get(ingrediente);
-        if(qtdIngrediente != null) {
-            estoque.put(ingrediente, qtdIngrediente + quantidade);
-        } else throw new IllegalArgumentException("Ingrediente não encontrado");
+        verificaSeIngredienteNaoExiste(ingrediente);
+        estoque.put(ingrediente, estoque.get(ingrediente) + quantidade);
     }
 
     public void reduzirQuantidadeDoIngredienteEmEstoque(Ingrediente ingrediente, Integer quantidade) {
+        verificaSeIngredienteNaoExiste(ingrediente);
         Integer qtdIngrediente = estoque.get(ingrediente);
-        if(qtdIngrediente != null) {
-            estoque.put(ingrediente, qtdIngrediente - quantidade);
-        }
+        verificaQuantidade(qtdIngrediente, quantidade);
+
+        estoque.put(ingrediente, qtdIngrediente - quantidade);
+    }
+
+    private void verificaQuantidade(Integer qtdIngrediente, Integer quantidade) {
+        if(quantidade < 0 || qtdIngrediente < quantidade) throw new IllegalArgumentException("Quantidade Inválida");
     }
 
     public Integer consultarQuantidadeDoIngredienteEmEstoque(Ingrediente ingrediente) {
-        if(estoque.get(ingrediente) != null) {
-            return estoque.get(ingrediente);
-        } else throw new IllegalArgumentException("Ingrediente não encontrado");
+        verificaSeIngredienteNaoExiste(ingrediente);
+        return estoque.get(ingrediente);
+    }
+
+    private void verificaSeIngredienteJaExiste(Ingrediente ingrediente) {
+        if(estoque.get(ingrediente) != null) throw new IllegalArgumentException("Ingrediente já cadastrado.");
+    }
+
+    private void verificaSeIngredienteNaoExiste(Ingrediente ingrediente) {
+        if(estoque.get(ingrediente) == null) throw new IllegalArgumentException("Ingrediente não encontrado");
     }
 }
