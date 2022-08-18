@@ -1,5 +1,8 @@
 package Armazem;
 
+import exceptions.IngredienteJaCadastrado;
+import exceptions.IngredienteNaoCadastrado;
+import exceptions.QuantidadeInvalida;
 import ingredientes.Ingrediente;
 
 import java.util.TreeMap;
@@ -22,6 +25,7 @@ public class Armazem {
 
     public void adicionarQuantidadeDoIngredienteEmEstoque(Ingrediente ingrediente, Integer quantidade) {
         verificaSeIngredienteNaoExiste(ingrediente);
+        verficaSeQuantidadeMaiorQueZero(quantidade);
         estoque.put(ingrediente, estoque.get(ingrediente) + quantidade);
     }
 
@@ -33,8 +37,12 @@ public class Armazem {
         estoque.put(ingrediente, qtdIngrediente - quantidade);
     }
 
+    private void verficaSeQuantidadeMaiorQueZero(Integer quantidade) {
+        verificaQuantidade(Integer.MAX_VALUE, quantidade);
+    }
+
     private void verificaQuantidade(Integer qtdIngrediente, Integer quantidade) {
-        if(quantidade < 0 || qtdIngrediente < quantidade) throw new IllegalArgumentException("Quantidade Inválida");
+        if(quantidade < 0 || qtdIngrediente < quantidade) throw new QuantidadeInvalida();
     }
 
     public Integer consultarQuantidadeDoIngredienteEmEstoque(Ingrediente ingrediente) {
@@ -43,10 +51,10 @@ public class Armazem {
     }
 
     private void verificaSeIngredienteJaExiste(Ingrediente ingrediente) {
-        if(estoque.get(ingrediente) != null) throw new IllegalArgumentException("Ingrediente já cadastrado.");
+        if(estoque.containsKey(ingrediente)) throw new IngredienteJaCadastrado();
     }
 
     private void verificaSeIngredienteNaoExiste(Ingrediente ingrediente) {
-        if(estoque.get(ingrediente) == null) throw new IllegalArgumentException("Ingrediente não encontrado");
+        if(!estoque.containsKey(ingrediente)) throw new IngredienteNaoCadastrado();
     }
 }

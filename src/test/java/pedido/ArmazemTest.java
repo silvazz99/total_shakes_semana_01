@@ -3,10 +3,7 @@ package pedido;
 import Armazem.Armazem;
 import ingredientes.Fruta;
 import ingredientes.TipoFruta;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,6 +32,7 @@ public class ArmazemTest {
     }
 
     @Test
+    @DisplayName("Deve registrar os ingredientes, quando não forem repetidos")
     void ShouldRegisterIngredients_WhenDoNotRepeatIngredients() {
         armazem.cadastrarIngredienteEmEstoque(morango);
         armazem.cadastrarIngredienteEmEstoque(abacate);
@@ -49,6 +47,7 @@ public class ArmazemTest {
     }
 
     @Test
+    @DisplayName("Não Deve registrar os ingredientes, se já existe")
     void ShouldNotRegisterIngredients_WhenRepeatedIngredients() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             armazem.cadastrarIngredienteEmEstoque(morango);
@@ -59,6 +58,18 @@ public class ArmazemTest {
     }
 
     @Test
+    @DisplayName("Não deve adicionar ingredientes, quando abaixo de zero")
+    void ShouldNotAddIngredients_WhenAddedValueIsBelowZero() {
+        armazem.cadastrarIngredienteEmEstoque(morango);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            armazem.adicionarQuantidadeDoIngredienteEmEstoque(morango, -10);
+        });
+
+        assertEquals(QUANTIDADE_INVALIDA, exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Deve descadastrar ingredientes que existem")
     void ShouldUnregister_WhenIngredientAlreadyExists() {
         armazem.cadastrarIngredienteEmEstoque(morango);
         armazem.descadastrarIngredienteEmEstoque(morango);
@@ -71,6 +82,7 @@ public class ArmazemTest {
     }
 
     @Test
+    @DisplayName("Deve adicionar, quando ingrediente está registrado")
     void ShouldAdd_WhenIngredientsIsRegistered() {
         armazem.cadastrarIngredienteEmEstoque(morango);
         armazem.adicionarQuantidadeDoIngredienteEmEstoque(morango, 10);
@@ -79,6 +91,7 @@ public class ArmazemTest {
     }
 
     @Test
+    @DisplayName("Não deve adicionar, quando ingrediente não está cadastrado")
     void ShouldNotAdd_WhenIngredientIsNotRegistered() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             armazem.adicionarQuantidadeDoIngredienteEmEstoque(morango, 10);
@@ -88,6 +101,7 @@ public class ArmazemTest {
     }
 
     @Test
+    @DisplayName("Deve reduzir quantidade quando ingrediente está registrado")
     void ShouldReduce_WhenIngredientIsRegistered() {
         armazem.cadastrarIngredienteEmEstoque(morango);
         armazem.adicionarQuantidadeDoIngredienteEmEstoque(morango, 10);
@@ -97,6 +111,7 @@ public class ArmazemTest {
     }
 
     @Test
+    @DisplayName("Deve soltar exceção quando tentar descastrar ingrediente que não existe")
     void ShouldThrowException_WhenUnregisterIngredientNotFound() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> armazem.descadastrarIngredienteEmEstoque(morango));
 
@@ -104,6 +119,7 @@ public class ArmazemTest {
     }
 
     @Test
+    @DisplayName("Não deve reduzir quantidade quando menor que zero")
     void ShouldNotReduce_WhenQuantityBelowZero() {
         armazem.cadastrarIngredienteEmEstoque(morango);
 
@@ -115,6 +131,7 @@ public class ArmazemTest {
     }
 
     @Test
+    @DisplayName("Não deve reduzir ingredientes quando maior que a quantidade")
     void ShouldNotReduce_WhenIngredientQuantityBelowReduceQuantity() {
         armazem.cadastrarIngredienteEmEstoque(morango);
         armazem.adicionarQuantidadeDoIngredienteEmEstoque(morango, 5);
