@@ -34,7 +34,8 @@ public class Armazem {
         Integer qtdIngrediente = estoque.get(ingrediente);
         verificaQuantidade(qtdIngrediente, quantidade);
 
-        estoque.put(ingrediente, qtdIngrediente - quantidade);
+        if(qtdIngrediente == quantidade) estoque.remove(ingrediente);
+        else estoque.put(ingrediente, qtdIngrediente - quantidade);
     }
 
     private void verficaSeQuantidadeMaiorQueZero(Integer quantidade) {

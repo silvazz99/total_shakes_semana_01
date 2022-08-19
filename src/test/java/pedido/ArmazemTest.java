@@ -43,7 +43,6 @@ public class ArmazemTest {
                 () -> assertEquals(0, armazem.consultarQuantidadeDoIngredienteEmEstoque(banana)),
                 () -> assertEquals(0, armazem.consultarQuantidadeDoIngredienteEmEstoque(abacate))
         );
-
     }
 
     @Test
@@ -107,7 +106,15 @@ public class ArmazemTest {
         armazem.adicionarQuantidadeDoIngredienteEmEstoque(morango, 10);
         armazem.reduzirQuantidadeDoIngredienteEmEstoque(morango, 5);
 
-        assertEquals(5, armazem.consultarQuantidadeDoIngredienteEmEstoque(morango));
+        armazem.cadastrarIngredienteEmEstoque(banana);
+        armazem.adicionarQuantidadeDoIngredienteEmEstoque(banana, 10);
+        armazem.reduzirQuantidadeDoIngredienteEmEstoque(banana, 10);
+
+        assertAll(() -> assertEquals(5, armazem.consultarQuantidadeDoIngredienteEmEstoque(morango)),
+                () -> assertThrows(IllegalArgumentException.class, () -> {
+                    armazem.consultarQuantidadeDoIngredienteEmEstoque(banana);
+                })
+        );
     }
 
     @Test
